@@ -86,17 +86,17 @@ Open http://localhost:5173
 
 | Data | Source |
 |------|--------|
-| Tables & views | `information_schema.tables` |
+| Base tables | `information_schema.tables` filtered to `BASE TABLE` |
 | Columns + types | `information_schema.columns` |
-| Primary keys | `information_schema.table_constraints` |
-| Foreign keys | `information_schema.referential_constraints` |
-| Unique constraints | `information_schema.table_constraints` |
+| Primary keys | `pg_catalog.pg_constraint` + `pg_attribute` |
+| Foreign keys | `pg_catalog.pg_constraint` + `pg_attribute` |
+| Unique constraints | `pg_catalog.pg_constraint` + `pg_attribute` |
 | Indexes | `pg_indexes` |
-| Table comments | `obj_description()` |
+| Table comments | `obj_description()` via table `regclass` |
 | Column comments | `col_description()` |
 | Estimated row counts | `pg_class.reltuples` |
 
-Only non-system schemas are included (excludes `pg_catalog`, `information_schema`, `pg_toast`).
+Only non-system schemas are included. The backend excludes `pg_catalog`, `information_schema`, and `pg_toast`.
 
 ## Tips
 
