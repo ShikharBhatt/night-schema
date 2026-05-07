@@ -7,20 +7,24 @@ import ERDCanvas from "./components/ERDCanvas";
 export default function App() {
   const { schema, loading, error, refetch } = useSchema();
   const [searchTerm, setSearchTerm] = useState("");
-  const [focusTableId, setFocusTableId] = useState(null);
-  const [isLightTheme, setIsLightTheme] = useState(false);
+  const [focusTarget, setFocusTarget] = useState(null);
+  const [isLightTheme, setIsLightTheme] = useState(true);
 
-  const handleFocusTable = useCallback((id) => {
-    setFocusTableId(id);
-  }, []);
-
-  const handleFocusDone = useCallback(() => {
-    setFocusTableId(null);
+  const handleFocusTable = useCallback((tableId, columnName = null) => {
+    setFocusTarget({ tableId, columnName, nonce: Date.now() });
   }, []);
 
   const toggleTheme = useCallback(() => {
     setIsLightTheme(prev => !prev);
   }, []);
+
+  // Clear focus when user starts searching
+  const handleSearchChange = useCallback((term) => {
+    setSearchTerm(term);
+    if (term && focusTarget) {
+      setFocusTarget(null);
+    }
+  }, [focusTarget]);
 
   return (
     <div
@@ -35,12 +39,13 @@ export default function App() {
       <Sidebar
         schema={schema}
         searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
+        onSearchChange={handleSearchChange}
         onFocusTable={handleFocusTable}
         onRefetch={refetch}
         loading={loading}
         isLightTheme={isLightTheme}
         onToggleTheme={toggleTheme}
+        focusTarget={focusTarget}
       />
 
       <main style={{ flex: 1, position: "relative", overflow: "hidden" }}>
@@ -55,8 +60,7 @@ export default function App() {
             <ERDCanvas
               schema={schema}
               searchTerm={searchTerm}
-              focusTableId={focusTableId}
-              onFocusDone={handleFocusDone}
+              focusTarget={focusTarget}
             />
           </ReactFlowProvider>
         )}

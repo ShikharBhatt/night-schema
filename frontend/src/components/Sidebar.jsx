@@ -10,6 +10,7 @@ export default function Sidebar({
   loading,
   isLightTheme,
   onToggleTheme,
+  focusTarget,
 }) {
   const [expandedTable, setExpandedTable] = useState(null);
 
@@ -289,6 +290,9 @@ export default function Sidebar({
               setExpandedTable(expandedTable === table.id ? null : table.id)
             }
             onFocus={() => onFocusTable(table.id)}
+            onFocusColumn={(columnName) => onFocusTable(table.id, columnName)}
+            isFocusedTable={focusTarget?.tableId === table.id}
+            focusedColumn={focusTarget?.tableId === table.id ? focusTarget?.columnName : null}
           />
         ))}
 
@@ -343,7 +347,7 @@ export default function Sidebar({
   );
 }
 
-function TableListItem({ table, searchTerm, isExpanded, onToggle, onFocus }) {
+function TableListItem({ table, searchTerm, isExpanded, onToggle, onFocus, onFocusColumn, isFocusedTable, focusedColumn }) {
   const q = searchTerm.toLowerCase();
   const matchingCols = q
     ? table.columns.filter(
@@ -363,9 +367,15 @@ function TableListItem({ table, searchTerm, isExpanded, onToggle, onFocus }) {
           cursor: "pointer",
           gap: "6px",
           transition: "background 0.1s",
+          background: isFocusedTable ? "var(--accent-dim)" : "transparent",
+          borderLeft: isFocusedTable ? "3px solid var(--accent)" : "3px solid transparent",
         }}
-        onMouseEnter={(e) => (e.currentTarget.style.background = "var(--bg-hover)")}
-        onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+        onMouseEnter={(e) => {
+          if (!isFocusedTable) e.currentTarget.style.background = "var(--bg-hover)";
+        }}
+        onMouseLeave={(e) => {
+          if (!isFocusedTable) e.currentTarget.style.background = "transparent";
+        }}
       >
         <button
           onClick={onToggle}
@@ -394,8 +404,10 @@ function TableListItem({ table, searchTerm, isExpanded, onToggle, onFocus }) {
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
+            cursor: "pointer",
           }}
-          onClick={onToggle}
+          onClick={onFocus}
+          title="Focus table on canvas"
         >
           {table.schema !== "public" && (
             <span style={{ color: "var(--text-muted)" }}>{table.schema}.</span>
@@ -457,33 +469,60 @@ function TableListItem({ table, searchTerm, isExpanded, onToggle, onFocus }) {
               q &&
               (col.name.toLowerCase().includes(q) ||
                 col.displayType?.toLowerCase().includes(q));
+            const markers = [];
+            if (col.isPrimaryKey) markers.push({ symbol: "🔑", color: "var(--pk-color)", title: "Primary Key" });
+            if (col.isForeignKey) markers.push({ symbol: "→", color: "var(--fk-color)", title: "Foreign Key" });
+            if (col.isUnique && !col.isPrimaryKey) markers.push({ symbol: "◆", color: "var(--purple)", title: "Unique" });
             return (
               <div
                 key={col.name}
+                onClick={() => onFocusColumn?.(col.name)}
+                title="Focus field on canvas"
                 style={{
                   display: "flex",
                   alignItems: "center",
                   padding: "3px 12px 3px 28px",
                   gap: "6px",
-                  background: isMatch
-                    ? "var(--accent-dim)"
-                    : "transparent",
-                  borderLeft: isMatch
-                    ? "2px solid var(--accent)"
-                    : "2px solid transparent",
+                  background:
+                    focusedColumn === col.name
+                      ? "var(--accent-dim)"
+                      : isMatch
+                      ? "var(--accent-dim)"
+                      : "transparent",
+                  borderLeft:
+                    focusedColumn === col.name
+                      ? "2px solid var(--accent)"
+                      : isMatch
+                      ? "2px solid var(--accent)"
+                      : "2px solid transparent",
                   marginLeft: "0",
+                  cursor: "pointer",
+                  fontWeight: focusedColumn === col.name ? 600 : 400,
                 }}
               >
-                <span
+                <div
                   style={{
-                    fontSize: "10px",
-                    color: col.isPrimaryKey ? "var(--pk-color)" : "var(--text-muted)",
-                    width: "12px",
+                    width: "28px",
+                    display: "flex",
+                    gap: "3px",
                     flexShrink: 0,
+                    alignItems: "center",
                   }}
                 >
-                  {col.isPrimaryKey ? "🔑" : "·"}
-                </span>
+                  {markers.map((marker, index) => (
+                    <span
+                      key={`${col.name}-marker-${index}`}
+                      title={marker.title}
+                      style={{
+                        fontSize: "10px",
+                        lineHeight: 1,
+                        color: marker.color,
+                      }}
+                    >
+                      {marker.symbol}
+                    </span>
+                  ))}
+                </div>
                 <span
                   style={{
                     fontSize: "11px",

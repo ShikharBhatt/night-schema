@@ -334,7 +334,7 @@ import { useState, useEffect } from "react";
 // You can directly replace the existing MOCK_SCHEMA with this one
 // or merge incrementally.
 
-const USE_MOCK = true;
+const USE_MOCK = false;
 
 const uuidCol = (name, position, extra = {}) => ({
   name,

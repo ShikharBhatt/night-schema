@@ -9,6 +9,7 @@ const NODE_GAP_Y = 60;
 const HEADER_HEIGHT = 48;
 const ROW_HEIGHT = 28;
 const PADDING = 16;
+const FOOTER_HEIGHT = 26;
 
 export function buildLayout(schema, searchTerm = "") {
   const { tables, relationships } = schema;
@@ -46,18 +47,41 @@ export function buildLayout(schema, searchTerm = "") {
   // Auto layout: simple column grid, 4 tables per column
   const COLS = Math.ceil(Math.sqrt(tables.length));
   const positions = {};
-
-  tables.forEach((table, i) => {
+  const tableLayouts = tables.map((table, i) => {
     const col = i % COLS;
     const row = Math.floor(i / COLS);
     const nodeHeight =
-      HEADER_HEIGHT + table.columns.length * ROW_HEIGHT + PADDING;
+      HEADER_HEIGHT + table.columns.length * ROW_HEIGHT + FOOTER_HEIGHT + PADDING;
 
-    positions[table.id] = {
-      x: col * (NODE_WIDTH + NODE_GAP_X),
-      y: row * (nodeHeight + NODE_GAP_Y),
+    return {
+      id: table.id,
+      col,
+      row,
+      nodeHeight,
     };
   });
+
+  // Use per-row max heights to avoid overlaps when cards in the same row have different sizes.
+  const rowHeights = new Map();
+  for (const layout of tableLayouts) {
+    const prev = rowHeights.get(layout.row) || 0;
+    rowHeights.set(layout.row, Math.max(prev, layout.nodeHeight));
+  }
+
+  const rowOffsets = new Map();
+  let accumulatedY = 0;
+  const totalRows = Math.ceil(tables.length / COLS);
+  for (let row = 0; row < totalRows; row += 1) {
+    rowOffsets.set(row, accumulatedY);
+    accumulatedY += (rowHeights.get(row) || 0) + NODE_GAP_Y;
+  }
+
+  for (const layout of tableLayouts) {
+    positions[layout.id] = {
+      x: layout.col * (NODE_WIDTH + NODE_GAP_X),
+      y: rowOffsets.get(layout.row) || 0,
+    };
+  }
 
   // Build nodes
   const nodes = tables.map((table) => {

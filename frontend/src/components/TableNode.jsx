@@ -57,8 +57,29 @@ function highlight(text, term) {
   );
 }
 
+function getColumnMarkers(col) {
+  const markers = [];
+  if (col.isPrimaryKey) {
+    markers.push({ symbol: "🔑", color: "var(--pk-color)", title: "Primary Key" });
+  }
+  if (col.isForeignKey) {
+    markers.push({ symbol: "→", color: "var(--fk-color)", title: "Foreign Key" });
+  }
+  if (col.isUnique && !col.isPrimaryKey) {
+    markers.push({ symbol: "◆", color: "var(--purple)", title: "Unique" });
+  }
+  return markers;
+}
+
 const TableNode = memo(({ data }) => {
-  const { table, isHighlighted, isDimmed, matchingColumns, searchTerm } = data;
+  const {
+    table,
+    isHighlighted,
+    isDimmed,
+    matchingColumns,
+    searchTerm,
+    focusColumn,
+  } = data;
 
   return (
     <div
@@ -154,7 +175,8 @@ const TableNode = memo(({ data }) => {
       {/* Columns */}
       <div style={{ padding: "4px 0" }}>
         {table.columns.map((col) => {
-          const isColMatch = matchingColumns.has(col.name);
+          const isColMatch = matchingColumns.has(col.name) || focusColumn === col.name;
+          const markers = getColumnMarkers(col);
           return (
             <div
               key={col.name}
@@ -211,27 +233,29 @@ const TableNode = memo(({ data }) => {
               />
 
               {/* Key indicator */}
-              <span
+              <div
                 style={{
-                  width: "14px",
-                  fontSize: "10px",
+                  width: "28px",
+                  display: "flex",
+                  gap: "3px",
+                  alignItems: "center",
                   flexShrink: 0,
-                  color: col.isPrimaryKey
-                    ? "var(--pk-color)"
-                    : col.isUnique
-                    ? "var(--purple)"
-                    : "transparent",
                 }}
-                title={
-                  col.isPrimaryKey
-                    ? "Primary Key"
-                    : col.isUnique
-                    ? "Unique"
-                    : ""
-                }
               >
-                {col.isPrimaryKey ? "🔑" : col.isUnique ? "◆" : "·"}
-              </span>
+                {markers.map((marker, index) => (
+                  <span
+                    key={`${col.name}-marker-${index}`}
+                    title={marker.title}
+                    style={{
+                      fontSize: "10px",
+                      lineHeight: 1,
+                      color: marker.color,
+                    }}
+                  >
+                    {marker.symbol}
+                  </span>
+                ))}
+              </div>
 
               {/* Column name */}
               <span

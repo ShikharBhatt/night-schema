@@ -19,7 +19,7 @@ import { buildLayout } from "../hooks/useLayout";
 
 const nodeTypes = { tableNode: TableNode };
 
-export default function ERDCanvas({ schema, searchTerm, focusTableId, onFocusDone }) {
+export default function ERDCanvas({ schema, searchTerm, focusTarget }) {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const { fitView, setCenter, getNode } = useReactFlow();
@@ -45,10 +45,11 @@ export default function ERDCanvas({ schema, searchTerm, focusTableId, onFocusDon
     }
   }, [schema, searchTerm]);
 
-  // Focus on a specific table when requested from sidebar
+  // Focus on a specific table/column when requested from sidebar
   useEffect(() => {
-    if (!focusTableId) return;
-    const node = getNode(focusTableId);
+    if (!focusTarget?.tableId) return;
+
+    const node = getNode(focusTarget.tableId);
     if (node) {
       setCenter(
         node.position.x + 140,
@@ -56,8 +57,18 @@ export default function ERDCanvas({ schema, searchTerm, focusTableId, onFocusDon
         { zoom: 1.2, duration: 500 }
       );
     }
-    onFocusDone?.();
-  }, [focusTableId]);
+
+    setNodes((prev) =>
+      prev.map((n) => ({
+        ...n,
+        data: {
+          ...n.data,
+          focusColumn:
+            n.id === focusTarget.tableId ? focusTarget.columnName || null : null,
+        },
+      }))
+    );
+  }, [focusTarget, getNode, setCenter, setNodes]);
 
   return (
     <div style={{ flex: 1, height: "100%" }}>
