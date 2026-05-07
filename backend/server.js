@@ -105,32 +105,42 @@ app.get("/api/schema", async (req, res) => {
       ORDER BY c.table_schema, c.table_name, c.ordinal_position;
     `);
 
-    // Get primary keys
+    // Get primary key columns from pg_catalog for the same visibility model as FKs.
     const pkResult = await client.query(`
       SELECT
-        kcu.table_schema,
-        kcu.table_name,
-        kcu.column_name
-      FROM information_schema.table_constraints tc
-      JOIN information_schema.key_column_usage kcu
-        ON tc.constraint_name = kcu.constraint_name
-        AND tc.table_schema = kcu.table_schema
-      WHERE tc.constraint_type = 'PRIMARY KEY'
-        AND tc.table_schema NOT IN ('pg_catalog', 'information_schema', 'pg_toast');
+        ns.nspname AS table_schema,
+        tbl.relname AS table_name,
+        col.attname AS column_name
+      FROM pg_constraint con
+      JOIN pg_class tbl ON tbl.oid = con.conrelid
+      JOIN pg_namespace ns ON ns.oid = tbl.relnamespace
+      JOIN LATERAL unnest(con.conkey) WITH ORDINALITY AS key_col(attnum, ord) ON true
+      JOIN pg_attribute col
+        ON col.attrelid = tbl.oid
+        AND col.attnum = key_col.attnum
+      WHERE con.contype = 'p'
+        AND tbl.relkind IN ('r', 'p')
+        AND ns.nspname NOT IN ('pg_catalog', 'information_schema', 'pg_toast')
+      ORDER BY ns.nspname, tbl.relname, key_col.ord;
     `);
 
-    // Get unique constraints
+    // Get unique constraint columns from pg_catalog.
     const uniqueResult = await client.query(`
       SELECT
-        kcu.table_schema,
-        kcu.table_name,
-        kcu.column_name
-      FROM information_schema.table_constraints tc
-      JOIN information_schema.key_column_usage kcu
-        ON tc.constraint_name = kcu.constraint_name
-        AND tc.table_schema = kcu.table_schema
-      WHERE tc.constraint_type = 'UNIQUE'
-        AND tc.table_schema NOT IN ('pg_catalog', 'information_schema', 'pg_toast');
+        ns.nspname AS table_schema,
+        tbl.relname AS table_name,
+        col.attname AS column_name
+      FROM pg_constraint con
+      JOIN pg_class tbl ON tbl.oid = con.conrelid
+      JOIN pg_namespace ns ON ns.oid = tbl.relnamespace
+      JOIN LATERAL unnest(con.conkey) WITH ORDINALITY AS key_col(attnum, ord) ON true
+      JOIN pg_attribute col
+        ON col.attrelid = tbl.oid
+        AND col.attnum = key_col.attnum
+      WHERE con.contype = 'u'
+        AND tbl.relkind IN ('r', 'p')
+        AND ns.nspname NOT IN ('pg_catalog', 'information_schema', 'pg_toast')
+      ORDER BY ns.nspname, tbl.relname, key_col.ord;
     `);
 
     // Get foreign keys (pg_catalog is more reliable than information_schema for FK mapping)
