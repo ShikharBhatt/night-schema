@@ -26,6 +26,37 @@
   --radius-lg: 10px;
   --shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
   --shadow-accent: 0 0 20px rgba(79, 142, 247, 0.15);
+  --table-header-bg: linear-gradient(135deg, #1e2a42 0%, #192038 100%);
+  --table-header-border: #2a3a5a;
+}
+
+/* Light theme variables */
+.light-theme {
+  --bg: #f8f9fa;
+  --bg-panel: #ffffff;
+  --bg-card: #f1f3f4;
+  --bg-hover: #e8eaed;
+  --border: #dadce0;
+  --border-subtle: #e8eaed;
+  --accent: #1a73e8;
+  --accent-dim: rgba(26, 115, 232, 0.1);
+  --accent-glow: rgba(26, 115, 232, 0.2);
+  --success: #34a853;
+  --warning: #fbbc04;
+  --danger: #ea4335;
+  --purple: #9333ea;
+  --text-primary: #202124;
+  --text-secondary: #5f6368;
+  --text-muted: #80868b;
+  --text-accent: #1a73e8;
+  --pk-color: #fbbc04;
+  --fk-color: #1a73e8;
+  --edge-color: #dadce0;
+  --edge-highlight: #1a73e8;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-accent: 0 0 12px rgba(26, 115, 232, 0.1);
+  --table-header-bg: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  --table-header-border: #90caf9;
 }
 
 *, *::before, *::after {
@@ -67,7 +98,7 @@ body {
   background: var(--bg) !important;
 }
 .react-flow__background pattern circle {
-  fill: #2a2a3a !important;
+  fill: var(--border) !important;
 }
 
 .react-flow__edge-path {

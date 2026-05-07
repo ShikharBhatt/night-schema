@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { Search, Table2, Link, RefreshCw, ChevronRight, X } from "lucide-react";
+import { Search, Table2, Link, RefreshCw, ChevronRight, X, Sun, Moon } from "lucide-react";
 
 export default function Sidebar({
   schema,
@@ -8,6 +8,8 @@ export default function Sidebar({
   onFocusTable,
   onRefetch,
   loading,
+  isLightTheme,
+  onToggleTheme,
 }) {
   const [expandedTable, setExpandedTable] = useState(null);
 
@@ -45,8 +47,8 @@ export default function Sidebar({
         width: "280px",
         minWidth: "280px",
         height: "100%",
-        background: "#0f0f16",
-        borderRight: "1px solid #1e1e2a",
+        background: "var(--bg-panel)",
+        borderRight: "1px solid var(--border)",
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
@@ -56,7 +58,7 @@ export default function Sidebar({
       <div
         style={{
           padding: "20px 16px 16px",
-          borderBottom: "1px solid #1e1e2a",
+          borderBottom: "1px solid var(--border)",
         }}
       >
         <div
@@ -71,7 +73,7 @@ export default function Sidebar({
             <div
               style={{
                 fontSize: "11px",
-                color: "#4f8ef7",
+                color: "var(--accent)",
                 fontFamily: "IBM Plex Mono, monospace",
                 letterSpacing: "0.1em",
                 textTransform: "uppercase",
@@ -84,7 +86,7 @@ export default function Sidebar({
               style={{
                 fontSize: "18px",
                 fontWeight: 600,
-                color: "#e8e8f0",
+                color: "var(--text-primary)",
                 fontFamily: "IBM Plex Sans, sans-serif",
               }}
             >
@@ -97,9 +99,9 @@ export default function Sidebar({
             title="Refresh schema"
             style={{
               background: "transparent",
-              border: "1px solid #2a2a3a",
+              border: "1px solid var(--border)",
               borderRadius: "6px",
-              color: "#8888a0",
+              color: "var(--text-secondary)",
               cursor: "pointer",
               padding: "6px",
               display: "flex",
@@ -108,12 +110,12 @@ export default function Sidebar({
               transition: "all 0.15s",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = "#1a1a24";
-              e.currentTarget.style.color = "#e8e8f0";
+              e.currentTarget.style.background = "var(--bg-hover)";
+              e.currentTarget.style.color = "var(--text-primary)";
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.background = "transparent";
-              e.currentTarget.style.color = "#8888a0";
+              e.currentTarget.style.color = "var(--text-secondary)";
             }}
           >
             <RefreshCw
@@ -122,6 +124,33 @@ export default function Sidebar({
                 animation: loading ? "spin 1s linear infinite" : "none",
               }}
             />
+          </button>
+          <button
+            onClick={onToggleTheme}
+            title={isLightTheme ? "Switch to dark theme" : "Switch to light theme"}
+            style={{
+              background: "transparent",
+              border: "1px solid var(--border)",
+              borderRadius: "6px",
+              color: "var(--text-secondary)",
+              cursor: "pointer",
+              padding: "6px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              transition: "all 0.15s",
+              marginLeft: "8px",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "var(--bg-hover)";
+              e.currentTarget.style.color = "var(--text-primary)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "transparent";
+              e.currentTarget.style.color = "var(--text-secondary)";
+            }}
+          >
+            {isLightTheme ? <Moon size={14} /> : <Sun size={14} />}
           </button>
         </div>
 
@@ -134,7 +163,7 @@ export default function Sidebar({
               left: "10px",
               top: "50%",
               transform: "translateY(-50%)",
-              color: "#55556a",
+              color: "var(--text-muted)",
               pointerEvents: "none",
             }}
           />
@@ -144,18 +173,18 @@ export default function Sidebar({
             placeholder="Search tables, columns, types..."
             style={{
               width: "100%",
-              background: "#13131a",
-              border: "1px solid #2a2a3a",
+              background: "var(--bg-card)",
+              border: "1px solid var(--border)",
               borderRadius: "6px",
               padding: "8px 32px 8px 32px",
-              color: "#e8e8f0",
+              color: "var(--text-primary)",
               fontSize: "12px",
               fontFamily: "IBM Plex Mono, monospace",
               outline: "none",
               transition: "border-color 0.15s",
             }}
-            onFocus={(e) => (e.target.style.borderColor = "#4f8ef7")}
-            onBlur={(e) => (e.target.style.borderColor = "#2a2a3a")}
+            onFocus={(e) => (e.target.style.borderColor = "var(--accent)")}
+            onBlur={(e) => (e.target.style.borderColor = "var(--border)")}
           />
           {searchTerm && (
             <button
@@ -167,7 +196,7 @@ export default function Sidebar({
                 transform: "translateY(-50%)",
                 background: "transparent",
                 border: "none",
-                color: "#55556a",
+                color: "var(--text-muted)",
                 cursor: "pointer",
                 padding: "2px",
                 display: "flex",
@@ -187,8 +216,8 @@ export default function Sidebar({
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
             gap: "1px",
-            background: "#1e1e2a",
-            borderBottom: "1px solid #1e1e2a",
+            background: "var(--border)",
+            borderBottom: "1px solid var(--border)",
           }}
         >
           {[
@@ -198,7 +227,7 @@ export default function Sidebar({
             <div
               key={label}
               style={{
-                background: "#0f0f16",
+                background: "var(--bg-card)",
                 padding: "10px 12px",
                 display: "flex",
                 flexDirection: "column",
@@ -209,7 +238,7 @@ export default function Sidebar({
                 style={{
                   fontSize: "18px",
                   fontWeight: 600,
-                  color: "#e8e8f0",
+                  color: "var(--text-primary)",
                   fontFamily: "IBM Plex Mono, monospace",
                 }}
               >
@@ -218,7 +247,7 @@ export default function Sidebar({
               <div
                 style={{
                   fontSize: "10px",
-                  color: "#55556a",
+                  color: "var(--text-muted)",
                   textTransform: "uppercase",
                   letterSpacing: "0.08em",
                   display: "flex",
@@ -241,9 +270,9 @@ export default function Sidebar({
             style={{
               padding: "8px 16px",
               fontSize: "11px",
-              color: "#55556a",
+              color: "var(--text-muted)",
               fontFamily: "IBM Plex Mono, monospace",
-              borderBottom: "1px solid #1a1a22",
+              borderBottom: "1px solid var(--border-subtle)",
             }}
           >
             {filtered.length} result{filtered.length !== 1 ? "s" : ""}
@@ -268,7 +297,7 @@ export default function Sidebar({
             style={{
               padding: "32px 16px",
               textAlign: "center",
-              color: "#44445a",
+              color: "var(--text-muted)",
               fontSize: "12px",
               fontFamily: "IBM Plex Mono, monospace",
             }}
@@ -281,21 +310,21 @@ export default function Sidebar({
       {/* Footer legend */}
       <div
         style={{
-          borderTop: "1px solid #1e1e2a",
+          borderTop: "1px solid var(--border)",
           padding: "10px 16px",
           display: "flex",
           gap: "12px",
           fontSize: "10px",
-          color: "#44445a",
+          color: "var(--text-muted)",
           fontFamily: "IBM Plex Mono, monospace",
           flexWrap: "wrap",
         }}
       >
         <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-          <span style={{ color: "#fbbf24" }}>🔑</span> PK
+          <span style={{ color: "var(--pk-color)" }}>🔑</span> PK
         </span>
         <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-          <span style={{ color: "#4f8ef7" }}>→</span> FK
+          <span style={{ color: "var(--fk-color)" }}>→</span> FK
         </span>
         <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
           <span
@@ -303,7 +332,7 @@ export default function Sidebar({
               width: "5px",
               height: "5px",
               borderRadius: "50%",
-              background: "#34d399",
+              background: "var(--success)",
               display: "inline-block",
             }}
           />
@@ -325,7 +354,7 @@ function TableListItem({ table, searchTerm, isExpanded, onToggle, onFocus }) {
     : [];
 
   return (
-    <div style={{ borderBottom: "1px solid #13131a" }}>
+    <div style={{ borderBottom: "1px solid var(--border-subtle)" }}>
       <div
         style={{
           display: "flex",
@@ -335,7 +364,7 @@ function TableListItem({ table, searchTerm, isExpanded, onToggle, onFocus }) {
           gap: "6px",
           transition: "background 0.1s",
         }}
-        onMouseEnter={(e) => (e.currentTarget.style.background = "#13131a")}
+        onMouseEnter={(e) => (e.currentTarget.style.background = "var(--bg-hover)")}
         onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
       >
         <button
@@ -343,7 +372,7 @@ function TableListItem({ table, searchTerm, isExpanded, onToggle, onFocus }) {
           style={{
             background: "transparent",
             border: "none",
-            color: "#55556a",
+            color: "var(--text-muted)",
             cursor: "pointer",
             padding: "0",
             display: "flex",
@@ -361,7 +390,7 @@ function TableListItem({ table, searchTerm, isExpanded, onToggle, onFocus }) {
             flex: 1,
             fontSize: "12px",
             fontFamily: "IBM Plex Mono, monospace",
-            color: searchTerm ? "#e8e8f0" : "#c0c0d0",
+            color: "var(--text-primary)",
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
@@ -369,7 +398,7 @@ function TableListItem({ table, searchTerm, isExpanded, onToggle, onFocus }) {
           onClick={onToggle}
         >
           {table.schema !== "public" && (
-            <span style={{ color: "#44445a" }}>{table.schema}.</span>
+            <span style={{ color: "var(--text-muted)" }}>{table.schema}.</span>
           )}
           {highlightText(table.name, searchTerm)}
         </span>
@@ -384,7 +413,7 @@ function TableListItem({ table, searchTerm, isExpanded, onToggle, onFocus }) {
             background: "transparent",
             border: "1px solid transparent",
             borderRadius: "4px",
-            color: "#55556a",
+            color: "var(--text-muted)",
             cursor: "pointer",
             padding: "2px 4px",
             fontSize: "10px",
@@ -393,12 +422,12 @@ function TableListItem({ table, searchTerm, isExpanded, onToggle, onFocus }) {
             flexShrink: 0,
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = "#2a2a3a";
-            e.currentTarget.style.color = "#4f8ef7";
+            e.currentTarget.style.borderColor = "var(--border)";
+            e.currentTarget.style.color = "var(--accent)";
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.borderColor = "transparent";
-            e.currentTarget.style.color = "#55556a";
+            e.currentTarget.style.color = "var(--text-muted)";
           }}
         >
           ⌖
@@ -420,7 +449,7 @@ function TableListItem({ table, searchTerm, isExpanded, onToggle, onFocus }) {
         <div
           style={{
             paddingBottom: "6px",
-            background: "#0d0d0f",
+            background: "var(--bg)",
           }}
         >
           {table.columns.map((col) => {
@@ -437,10 +466,10 @@ function TableListItem({ table, searchTerm, isExpanded, onToggle, onFocus }) {
                   padding: "3px 12px 3px 28px",
                   gap: "6px",
                   background: isMatch
-                    ? "rgba(79,142,247,0.06)"
+                    ? "var(--accent-dim)"
                     : "transparent",
                   borderLeft: isMatch
-                    ? "2px solid #4f8ef760"
+                    ? "2px solid var(--accent)"
                     : "2px solid transparent",
                   marginLeft: "0",
                 }}
@@ -448,7 +477,7 @@ function TableListItem({ table, searchTerm, isExpanded, onToggle, onFocus }) {
                 <span
                   style={{
                     fontSize: "10px",
-                    color: col.isPrimaryKey ? "#fbbf24" : "#44445a",
+                    color: col.isPrimaryKey ? "var(--pk-color)" : "var(--text-muted)",
                     width: "12px",
                     flexShrink: 0,
                   }}
@@ -459,7 +488,7 @@ function TableListItem({ table, searchTerm, isExpanded, onToggle, onFocus }) {
                   style={{
                     fontSize: "11px",
                     fontFamily: "IBM Plex Mono, monospace",
-                    color: col.isPrimaryKey ? "#fbbf24" : isMatch ? "#c8c8d8" : "#666680",
+                    color: col.isPrimaryKey ? "var(--pk-color)" : "var(--text-secondary)",
                     flex: 1,
                     overflow: "hidden",
                     textOverflow: "ellipsis",
@@ -472,7 +501,7 @@ function TableListItem({ table, searchTerm, isExpanded, onToggle, onFocus }) {
                   style={{
                     fontSize: "10px",
                     fontFamily: "IBM Plex Mono, monospace",
-                    color: "#44445a",
+                    color: "var(--text-muted)",
                   }}
                 >
                   {col.displayType}
@@ -496,7 +525,7 @@ function TableListItem({ table, searchTerm, isExpanded, onToggle, onFocus }) {
               style={{
                 fontSize: "10px",
                 fontFamily: "IBM Plex Mono, monospace",
-                color: "#4f8ef7",
+                color: "var(--accent)",
                 padding: "1px 12px",
               }}
             >
@@ -508,7 +537,7 @@ function TableListItem({ table, searchTerm, isExpanded, onToggle, onFocus }) {
               style={{
                 fontSize: "10px",
                 fontFamily: "IBM Plex Mono, monospace",
-                color: "#44445a",
+                color: "var(--text-muted)",
                 padding: "1px 12px",
               }}
             >
@@ -529,7 +558,7 @@ function highlightText(text, term) {
   return (
     <>
       {text.slice(0, idx)}
-      <span style={{ color: "#4f8ef7", fontWeight: 600 }}>
+      <span style={{ color: "var(--accent)", fontWeight: 600 }}>
         {text.slice(idx, idx + term.length)}
       </span>
       {text.slice(idx + term.length)}

@@ -9,6 +9,10 @@ import {
   BackgroundVariant,
   useReactFlow,
 } from "@xyflow/react";
+
+function getCssVarValue(variable) {
+  return getComputedStyle(document.documentElement).getPropertyValue(variable).trim();
+}
 import "@xyflow/react/dist/style.css";
 import TableNode from "./TableNode";
 import { buildLayout } from "../hooks/useLayout";
@@ -20,6 +24,12 @@ export default function ERDCanvas({ schema, searchTerm, focusTableId, onFocusDon
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const { fitView, setCenter, getNode } = useReactFlow();
   const initialLayoutDone = useRef(false);
+
+  const themeColors = useMemo(() => ({
+    accent: getCssVarValue('--accent'),
+    bg: getCssVarValue('--bg'),
+    bgCard: getCssVarValue('--bg-card'),
+  }), []);
 
   // Rebuild layout when schema or search changes
   useEffect(() => {
@@ -69,7 +79,7 @@ export default function ERDCanvas({ schema, searchTerm, focusTableId, onFocusDon
           variant={BackgroundVariant.Dots}
           gap={24}
           size={1}
-          color="#1e1e2a"
+          color="var(--border-subtle)"
         />
         <Controls
           style={{ bottom: 24, left: 16 }}
@@ -79,10 +89,10 @@ export default function ERDCanvas({ schema, searchTerm, focusTableId, onFocusDon
           style={{ bottom: 24, right: 16 }}
           nodeColor={(n) =>
             n.data?.isHighlighted
-              ? "#4f8ef7"
+              ? themeColors.accent
               : n.data?.isDimmed
-              ? "#111118"
-              : "#1a1a24"
+              ? themeColors.bg
+              : themeColors.bgCard
           }
           maskColor="rgba(0,0,0,0.6)"
           zoomable

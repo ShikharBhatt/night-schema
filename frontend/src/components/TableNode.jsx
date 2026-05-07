@@ -44,8 +44,8 @@ function highlight(text, term) {
       {text.slice(0, idx)}
       <mark
         style={{
-          background: "rgba(79,142,247,0.35)",
-          color: "#e8e8f0",
+          background: "var(--accent-dim)",
+          color: "var(--text-primary)",
           borderRadius: "2px",
           padding: "0 1px",
         }}
@@ -63,9 +63,9 @@ const TableNode = memo(({ data }) => {
   return (
     <div
       style={{
-        background: isDimmed ? "#111118" : "#1a1a24",
+        background: isDimmed ? "var(--bg)" : "var(--bg-card)",
         border: `1px solid ${
-          isHighlighted ? "#4f8ef7" : isDimmed ? "#1a1a22" : "#2a2a3a"
+          isHighlighted ? "var(--accent)" : isDimmed ? "var(--border-subtle)" : "var(--border)"
         }`,
         borderRadius: "8px",
         width: 280,
@@ -74,8 +74,8 @@ const TableNode = memo(({ data }) => {
         opacity: isDimmed ? 0.35 : 1,
         transition: "all 0.2s ease",
         boxShadow: isHighlighted
-          ? "0 0 0 1px #4f8ef7, 0 0 20px rgba(79,142,247,0.2)"
-          : "0 4px 16px rgba(0,0,0,0.4)",
+          ? "var(--shadow-accent)"
+          : "var(--shadow)",
         overflow: "hidden",
       }}
     >
@@ -83,10 +83,10 @@ const TableNode = memo(({ data }) => {
       <div
         style={{
           background: isHighlighted
-            ? "linear-gradient(135deg, #1e2a42 0%, #192038 100%)"
-            : "#13131a",
+            ? "var(--table-header-bg)"
+            : "var(--bg-panel)",
           padding: "10px 12px",
-          borderBottom: `1px solid ${isHighlighted ? "#2a3a5a" : "#22222f"}`,
+          borderBottom: `1px solid ${isHighlighted ? "var(--table-header-border)" : "var(--border)"}`,
           display: "flex",
           alignItems: "center",
           gap: "8px",
@@ -99,8 +99,8 @@ const TableNode = memo(({ data }) => {
             justifyContent: "center",
             width: "20px",
             height: "20px",
-            background: isHighlighted ? "#4f8ef720" : "#22222f",
-            border: `1px solid ${isHighlighted ? "#4f8ef750" : "#2a2a3a"}`,
+            background: isHighlighted ? "var(--accent-dim)" : "var(--bg-hover)",
+            border: `1px solid ${isHighlighted ? "var(--accent)" : "var(--border)"}`,
             borderRadius: "4px",
             fontSize: "10px",
           }}
@@ -112,7 +112,7 @@ const TableNode = memo(({ data }) => {
             <div
               style={{
                 fontSize: "9px",
-                color: "#55556a",
+                color: "var(--text-muted)",
                 textTransform: "uppercase",
                 letterSpacing: "0.08em",
                 marginBottom: "1px",
@@ -123,7 +123,7 @@ const TableNode = memo(({ data }) => {
           )}
           <div
             style={{
-              color: isHighlighted ? "#e8e8f0" : "#c0c0d0",
+              color: "var(--text-primary)",
               fontWeight: 600,
               fontSize: "12px",
               overflow: "hidden",
@@ -138,9 +138,9 @@ const TableNode = memo(({ data }) => {
           <span
             style={{
               fontSize: "9px",
-              color: "#55556a",
-              background: "#0d0d0f",
-              border: "1px solid #22222f",
+              color: "var(--text-muted)",
+              background: "var(--bg)",
+              border: "1px solid var(--border)",
               borderRadius: "3px",
               padding: "1px 5px",
               flexShrink: 0,
@@ -164,10 +164,10 @@ const TableNode = memo(({ data }) => {
                 padding: "4px 12px",
                 gap: "6px",
                 background: isColMatch
-                  ? "rgba(79,142,247,0.08)"
+                  ? "var(--accent-dim)"
                   : "transparent",
                 borderLeft: isColMatch
-                  ? "2px solid #4f8ef7"
+                  ? "2px solid var(--accent)"
                   : "2px solid transparent",
                 position: "relative",
                 minHeight: "26px",
@@ -184,8 +184,8 @@ const TableNode = memo(({ data }) => {
                   right: -5,
                   width: 8,
                   height: 8,
-                  background: "#22222f",
-                  border: "1.5px solid #2a2a3a",
+                  background: "var(--bg-hover)",
+                  border: "1.5px solid var(--border)",
                   borderRadius: "50%",
                   opacity: 0,
                   pointerEvents: "none",
@@ -202,8 +202,8 @@ const TableNode = memo(({ data }) => {
                   left: -5,
                   width: 8,
                   height: 8,
-                  background: "#22222f",
-                  border: "1.5px solid #2a2a3a",
+                  background: "var(--bg-hover)",
+                  border: "1.5px solid var(--border)",
                   borderRadius: "50%",
                   opacity: 0,
                   pointerEvents: "none",
@@ -217,9 +217,9 @@ const TableNode = memo(({ data }) => {
                   fontSize: "10px",
                   flexShrink: 0,
                   color: col.isPrimaryKey
-                    ? "#fbbf24"
+                    ? "var(--pk-color)"
                     : col.isUnique
-                    ? "#a78bfa"
+                    ? "var(--purple)"
                     : "transparent",
                 }}
                 title={
@@ -238,10 +238,10 @@ const TableNode = memo(({ data }) => {
                 style={{
                   flex: 1,
                   color: col.isPrimaryKey
-                    ? "#fbbf24"
+                    ? "var(--pk-color)"
                     : col.isNullable
-                    ? "#8888a0"
-                    : "#c8c8d8",
+                    ? "var(--text-secondary)"
+                    : "var(--text-primary)",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",

@@ -8,6 +8,7 @@ export default function App() {
   const { schema, loading, error, refetch } = useSchema();
   const [searchTerm, setSearchTerm] = useState("");
   const [focusTableId, setFocusTableId] = useState(null);
+  const [isLightTheme, setIsLightTheme] = useState(false);
 
   const handleFocusTable = useCallback((id) => {
     setFocusTableId(id);
@@ -17,8 +18,13 @@ export default function App() {
     setFocusTableId(null);
   }, []);
 
+  const toggleTheme = useCallback(() => {
+    setIsLightTheme(prev => !prev);
+  }, []);
+
   return (
     <div
+      className={isLightTheme ? "light-theme" : ""}
       style={{
         display: "flex",
         width: "100%",
@@ -33,6 +39,8 @@ export default function App() {
         onFocusTable={handleFocusTable}
         onRefetch={refetch}
         loading={loading}
+        isLightTheme={isLightTheme}
+        onToggleTheme={toggleTheme}
       />
 
       <main style={{ flex: 1, position: "relative", overflow: "hidden" }}>
@@ -72,7 +80,7 @@ function LoadingState() {
         justifyContent: "center",
         height: "100%",
         gap: "16px",
-        color: "#55556a",
+        color: "var(--text-muted)",
         fontFamily: "IBM Plex Mono, monospace",
       }}
     >
@@ -80,8 +88,8 @@ function LoadingState() {
         style={{
           width: "40px",
           height: "40px",
-          border: "2px solid #1e1e2a",
-          borderTop: "2px solid #4f8ef7",
+          border: "2px solid var(--border)",
+          borderTop: "2px solid var(--accent)",
           borderRadius: "50%",
           animation: "spin 1s linear infinite",
         }}
@@ -108,35 +116,35 @@ function ErrorState({ error, onRetry }) {
       }}
     >
       <div style={{ fontSize: "40px" }}>⚠</div>
-      <div style={{ fontSize: "16px", color: "#f87171", fontWeight: 600 }}>
+      <div style={{ fontSize: "16px", color: "var(--danger)", fontWeight: 600 }}>
         Connection Failed
       </div>
       <div
         style={{
           fontSize: "12px",
-          color: "#55556a",
+          color: "var(--text-secondary)",
           maxWidth: "400px",
           lineHeight: 1.6,
-          background: "#13131a",
-          border: "1px solid #2a2a3a",
+          background: "var(--bg-card)",
+          border: "1px solid var(--border)",
           borderRadius: "8px",
           padding: "16px",
         }}
       >
         {error}
       </div>
-      <div style={{ fontSize: "11px", color: "#44445a", lineHeight: 1.8 }}>
+      <div style={{ fontSize: "11px", color: "var(--text-muted)", lineHeight: 1.8 }}>
         Make sure your backend is running:<br />
-        <span style={{ color: "#4f8ef7" }}>cd backend && npm run dev</span>
-        <br />and <span style={{ color: "#4f8ef7" }}>DATABASE_URL</span> is set in <span style={{ color: "#4f8ef7" }}>.env</span>
+        <span style={{ color: "var(--accent)" }}>cd backend && npm run dev</span>
+        <br />and <span style={{ color: "var(--accent)" }}>DATABASE_URL</span> is set in <span style={{ color: "var(--accent)" }}>.env</span>
       </div>
       <button
         onClick={onRetry}
         style={{
-          background: "#1a1a24",
-          border: "1px solid #2a2a3a",
+          background: "var(--bg-card)",
+          border: "1px solid var(--border)",
           borderRadius: "6px",
-          color: "#e8e8f0",
+          color: "var(--text-primary)",
           fontSize: "12px",
           fontFamily: "IBM Plex Mono, monospace",
           padding: "8px 20px",
@@ -144,12 +152,12 @@ function ErrorState({ error, onRetry }) {
           transition: "all 0.15s",
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.borderColor = "#4f8ef7";
-          e.currentTarget.style.color = "#4f8ef7";
+          e.currentTarget.style.borderColor = "var(--accent)";
+          e.currentTarget.style.color = "var(--accent)";
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.borderColor = "#2a2a3a";
-          e.currentTarget.style.color = "#e8e8f0";
+          e.currentTarget.style.borderColor = "var(--border)";
+          e.currentTarget.style.color = "var(--text-primary)";
         }}
       >
         Retry Connection
